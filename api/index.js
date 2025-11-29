@@ -176,7 +176,7 @@ app.get('/api/channel/:channelName', async (req, res) => {
             return res.status(400).json({ error: 'Channel name is required' });
         }
 
-        console.log(`[Kids API] Fetching videos from channel: ${channelName}, page: ${page}`);
+        console.log(`[Kids API] 📺 Fetching channel videos: ${channelName}, page: ${page}`);
 
         const pageNum = parseInt(page);
         let searchResults;

@@ -284,7 +284,18 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                     }
 
                     final video = _relatedVideos[index];
-                    return VideoCard(video: video);
+                    return VideoCard(
+                      video: video,
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                VideoPlayerScreen(video: video),
+                          ),
+                        );
+                      },
+                    );
                   },
                 ),
               ),
