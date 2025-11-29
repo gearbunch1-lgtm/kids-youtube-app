@@ -64,9 +64,10 @@ app.get('/api/search', async (req, res) => {
         // For page 1, do a fresh search
         if (pageNum === 1) {
             console.time('YouTube Search');
-            // Prioritize Arabic cartoon content for kids safety
-            // Add "رسوم متحركة" (Arabic for cartoons) and "cartoon" for safe content
-            const searchQuery = q + ' رسوم متحركة للأطفال cartoon kids';
+            // PRIORITIZE Arabic cartoon content by putting Arabic keywords FIRST
+            // YouTube's algorithm gives more weight to earlier keywords
+            const searchQuery = 'رسوم متحركة للأطفال كرتون ' + q + ' cartoon kids';
+            console.log(`[Kids API] Enhanced search query: ${searchQuery}`);
             searchResults = await youtubeSearch.GetListByKeyword(searchQuery, false, 25);
             console.timeEnd('YouTube Search');
 
