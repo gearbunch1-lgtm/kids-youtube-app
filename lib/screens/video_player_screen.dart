@@ -80,8 +80,11 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     });
 
     try {
+      // Extract keywords from video title for topic-based recommendations
+      final searchQuery = _extractKeywords(widget.video.title);
+
       final result = await _youtubeService
-          .getChannelVideos(widget.video.channelTitle)
+          .searchVideos(searchQuery)
           .timeout(
             const Duration(seconds: 15),
             onTimeout: () {
@@ -92,16 +95,20 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
           );
 
       final videos = result['videos'] as List<Video>;
+      // Filter out the current video
+      final filteredVideos = videos
+          .where((v) => v.id != widget.video.id)
+          .toList();
 
       setState(() {
-        _relatedVideos = videos;
+        _relatedVideos = filteredVideos;
         _nextPageToken = result['nextPageToken'] as String?;
-        _hasMoreRelated = _nextPageToken != null && videos.isNotEmpty;
+        _hasMoreRelated = _nextPageToken != null && filteredVideos.isNotEmpty;
         _isLoadingRelated = false;
 
         // Show message if no videos found
-        if (videos.isEmpty) {
-          _errorMessage = 'No videos found from this channel';
+        if (filteredVideos.isEmpty) {
+          _errorMessage = 'No similar videos found';
         }
       });
     } catch (e) {
@@ -123,11 +130,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     });
 
     try {
+      final searchQuery = _extractKeywords(widget.video.title);
+
       final result = await _youtubeService
-          .getChannelVideos(
-            widget.video.channelTitle,
-            pageToken: _nextPageToken,
-          )
+          .searchVideos(searchQuery, pageToken: _nextPageToken)
           .timeout(
             const Duration(seconds: 15),
             onTimeout: () {
@@ -136,11 +142,14 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
           );
 
       final videos = result['videos'] as List<Video>;
+      final filteredVideos = videos
+          .where((v) => v.id != widget.video.id)
+          .toList();
 
       setState(() {
-        _relatedVideos.addAll(videos);
+        _relatedVideos.addAll(filteredVideos);
         _nextPageToken = result['nextPageToken'] as String?;
-        _hasMoreRelated = _nextPageToken != null && videos.isNotEmpty;
+        _hasMoreRelated = _nextPageToken != null && filteredVideos.isNotEmpty;
         _isLoadingRelated = false;
       });
     } catch (e) {
@@ -150,6 +159,34 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
         _hasMoreRelated = false; // Stop trying to load more on error
       });
     }
+  }
+
+  // Extract keywords from video title for better recommendations
+  String _extractKeywords(String title) {
+    // Remove common words and keep meaningful keywords
+    final stopWords = [
+      'the',
+      'a',
+      'an',
+      'and',
+      'or',
+      'but',
+      'in',
+      'on',
+      'at',
+      'to',
+      'for',
+      'of',
+      'with',
+      'by',
+    ];
+    final words = title.toLowerCase().split(RegExp(r'[\s\-\|]+'));
+    final keywords = words
+        .where((word) => word.length > 2 && !stopWords.contains(word))
+        .take(3)
+        .join(' ');
+
+    return keywords.isNotEmpty ? keywords : title.split(' ').take(3).join(' ');
   }
 
   @override
@@ -295,7 +332,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'More from ${widget.video.channelTitle}',
+                        'Similar Videos',
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                     ],
