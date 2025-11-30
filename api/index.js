@@ -299,10 +299,11 @@ module.exports = app;
 // For local development
 if (require.main === module) {
     app.listen(PORT, () => {
-        console.log(`🚀 Kids YouTube API running on http://localhost:${PORT}`);
+        console.log(`🚀 Kids YouTube API v2.0 (Topic-Based Related Videos) running on http://localhost:${PORT}`);
         console.log(`📝 Search endpoint: http://localhost:${PORT}/api/search?q=animals`);
-        console.log(`🎯 Filters: 2-20min duration, kid-friendly content only`);
+        console.log(`🎯 Filters: 1-30min duration, kid-friendly content only`);
         console.log(`♾️  Pagination: Unlimited results with youtube-search-api`);
+        console.log(`✨ NEW: Topic-based related videos (not channel-specific)`);
     });
 }
 
