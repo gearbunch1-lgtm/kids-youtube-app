@@ -43,11 +43,10 @@ dependencies:
   
   # Local storage
   shared_preferences: ^2.2.2
+  url_launcher: ^6.2.5
   
-  # YouTube player (better web support)
-  youtube_player_iframe: ^5.1.2
-  webview_flutter: ^4.4.2
-  webview_flutter_web: ^0.2.2
+  # YouTube player (better Android support)
+  youtube_player_flutter: ^9.0.3
   
   # Image caching
   cached_network_image: ^3.3.0

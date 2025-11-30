@@ -25,12 +25,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    
+
     // Load initial data
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final videoProvider = Provider.of<VideoProvider>(context, listen: false);
-      final bookmarkProvider = Provider.of<BookmarkProvider>(context, listen: false);
-      
+      final bookmarkProvider = Provider.of<BookmarkProvider>(
+        context,
+        listen: false,
+      );
+
       videoProvider.loadInitialVideos();
       bookmarkProvider.loadBookmarks();
     });
@@ -40,8 +43,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >= 
-        _scrollController.position.maxScrollExtent - 200) {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 400) {
       final videoProvider = Provider.of<VideoProvider>(context, listen: false);
       if (!videoProvider.isLoading && videoProvider.hasMore) {
         videoProvider.loadMoreVideos();
@@ -107,8 +110,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemCount: cat.kidsCategories.length,
                     itemBuilder: (context, index) {
                       final category = cat.kidsCategories[index];
-                      final isSelected = videoProvider.selectedCategory?.id == category.id;
-                      
+                      final isSelected =
+                          videoProvider.selectedCategory?.id == category.id;
+
                       return Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: CategoryChip(
@@ -137,7 +141,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.video_library, size: 64, color: Colors.grey[400]),
+                        Icon(
+                          Icons.video_library,
+                          size: 64,
+                          color: Colors.grey[400],
+                        ),
                         const SizedBox(height: 16),
                         Text(
                           'No videos found',
@@ -156,29 +164,28 @@ class _HomeScreenState extends State<HomeScreen> {
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   sliver: SliverGrid(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.75,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                    ),
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final video = videoProvider.videos[index];
-                        return VideoCard(
-                          video: video,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => VideoPlayerScreen(video: video),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                      childCount: videoProvider.videos.length,
-                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 0.75,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                        ),
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final video = videoProvider.videos[index];
+                      return VideoCard(
+                        video: video,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  VideoPlayerScreen(video: video),
+                            ),
+                          );
+                        },
+                      );
+                    }, childCount: videoProvider.videos.length),
                   ),
                 ),
 
@@ -208,14 +215,8 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Kids YouTube'),
-        centerTitle: true,
-      ),
-      body: IndexedStack(
-        index: _currentIndex,
-        children: screens,
-      ),
+      appBar: AppBar(title: const Text('Kids YouTube'), centerTitle: true),
+      body: IndexedStack(index: _currentIndex, children: screens),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
@@ -224,10 +225,7 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         },
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite),
             label: 'Favorites',

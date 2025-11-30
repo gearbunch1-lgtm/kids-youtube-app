@@ -7,12 +7,15 @@ class YouTubeService {
   // Backend API URL - using our Node.js proxy server for unlimited requests
   // Production backend deployed on Render
   static const String _backendUrl = 'https://kids-youtube-app.onrender.com';
+  // Backend API URL - using local server for testing fixes
+  // Use 127.0.0.1:3002 with 'adb reverse tcp:3002 tcp:3002'
+  // static const String _backendUrl = 'http://127.0.0.1:3002';
 
   // Search for videos using backend proxy (unlimited, no API key needed!)
   Future<Map<String, dynamic>> searchVideos(
     String query, {
     String? pageToken,
-    int maxResults = 20,
+    int maxResults = 50,
   }) async {
     try {
       final page = pageToken ?? '1';

@@ -181,11 +181,13 @@ app.get('/api/channel/:channelName', async (req, res) => {
         const pageNum = parseInt(page);
         let searchResults;
 
-        // Search for videos from this channel with Arabic cartoon priority
-        const searchQuery = `${channelName} رسوم متحركة للأطفال cartoon kids`;
+        // Search for videos from this channel - prioritize channel name
+        // We use a simpler query to ensure we get more results from the actual channel
+        const searchQuery = `${channelName} "cartoon" "kids"`;
 
         if (pageNum === 1) {
-            searchResults = await youtubeSearch.GetListByKeyword(searchQuery, false, 25);
+            // Increase initial fetch to 50 to have more candidates after filtering
+            searchResults = await youtubeSearch.GetListByKeyword(searchQuery, false, 50);
 
             // Cache continuation token
             if (searchResults.nextPage) {
