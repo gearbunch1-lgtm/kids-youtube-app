@@ -12,7 +12,8 @@
 - [x] Install backend dependencies
 - [x] Test backend server locally
 - [x] Migrate to Supabase Edge Functions (Deno)
-- [ ] Configure GitHub Secrets for Deployment
+- [x] Configure GitHub Secrets for Deployment
+- [x] Remove legacy Node.js backend
 
 ## Flutter Project Setup
 - [x] Initialize new Flutter project
