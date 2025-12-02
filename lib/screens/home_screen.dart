@@ -422,17 +422,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 gridDelegate: ResponsiveGrid.getGridDelegate(context),
                 delegate: SliverChildBuilderDelegate((context, index) {
                   final video = videoProvider.videos[index];
-                  return FadeInWidget(
-                    delay: Duration(milliseconds: index * 30),
-                    child: VideoCard(
-                      video: video,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          FadePageRoute(page: VideoPlayerScreen(video: video)),
-                        );
-                      },
-                    ),
+                  return VideoCard(
+                    video: video,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        FadePageRoute(page: VideoPlayerScreen(video: video)),
+                      );
+                    },
                   );
                 }, childCount: videoProvider.videos.length),
               ),
