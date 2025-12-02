@@ -607,9 +607,22 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                         else
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: ListView.builder(
+                            child: GridView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount:
+                                        MediaQuery.of(context).size.width > 600
+                                        ? 2
+                                        : 1,
+                                    childAspectRatio:
+                                        MediaQuery.of(context).size.width > 600
+                                        ? 2.5
+                                        : 3.5,
+                                    crossAxisSpacing: 12,
+                                    mainAxisSpacing: 12,
+                                  ),
                               itemCount:
                                   _relatedVideos.length +
                                   (_hasMoreRelated ? 1 : 0),
