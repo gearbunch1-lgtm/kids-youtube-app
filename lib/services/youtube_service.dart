@@ -4,9 +4,10 @@ import '../models/video_model.dart';
 import 'mock_data.dart';
 
 class YouTubeService {
-  // Backend API URL - using our Node.js proxy server for unlimited requests
-  // Production backend deployed on Render
-  static const String _backendUrl = 'https://kids-youtube-app.onrender.com';
+  // Backend API URL - using Supabase Edge Function (unlimited, no API key needed!)
+  // Deployed via GitHub Actions to Supabase
+  static const String _backendUrl =
+      'https://kivsnvphztbywnwlffmb.supabase.co/functions/v1/kids-youtube-api';
 
   // Search for videos using backend proxy (unlimited, no API key needed!)
   Future<Map<String, dynamic>> searchVideos(
