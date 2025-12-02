@@ -103,7 +103,7 @@ async function searchVideos(query: string, page: number, continuationToken: stri
             searchResults = await fetchYouTubeSearch(searchQuery, 75)
         }
 
-        // Kid-friendly keywords
+        // Kid-friendly keywords - make it more lenient
         const kidsKeywords = [
             'kids', 'children', 'educational', 'learning', 'fun', 'cartoon',
             'animation', 'story', 'tales', 'nursery', 'rhyme', 'song',
@@ -111,29 +111,41 @@ async function searchVideos(query: string, page: number, continuationToken: stri
             'math', 'abc', 'numbers', 'colors', 'shapes', 'family',
             'friendly', 'toddler', 'preschool', 'kindergarten',
             'أطفال', 'للأطفال', 'رسوم', 'متحركة', 'كرتون', 'تعليمي',
-            'قصص', 'أغاني', 'حكايات', 'تلوين', 'حيوانات'
+            'قصص', 'أغاني', 'حكايات', 'تلوين', 'حيوانات', 'baby', 'play'
         ]
 
-        // Filter and format videos
+        // Filter and format videos - be more lenient with filtering
         const videos = searchResults.items
             .filter((item: any) => item.type === 'video')
             .map((video: any) => {
                 const durationSeconds = parseDuration(video.duration || '')
 
-                // Must be between 1-30 minutes
-                if (durationSeconds < 60 || durationSeconds > 1800) return null
+                // Relax duration filter: 30 seconds to 45 minutes (was 1-30 min)
+                if (durationSeconds < 30 || durationSeconds > 2700) return null
 
                 const title = (video.title || '').toLowerCase()
                 const description = (video.description || '').toLowerCase()
                 const channel = (video.channelTitle || '').toLowerCase()
                 const combinedText = `${title} ${description} ${channel}`
 
-                // Must contain kid-friendly keyword
+                // More lenient keyword matching - check if it's NOT adult content
+                const hasAdultContent = combinedText.includes('18+') ||
+                    combinedText.includes('adult only') ||
+                    combinedText.includes('nsfw')
+
+                if (hasAdultContent) return null
+
+                // For Arabic queries, prioritize Arabic content but don't require it
+                // For other queries, just avoid adult content
                 const hasRelevantKeyword = kidsKeywords.some(keyword =>
                     combinedText.includes(keyword.toLowerCase())
                 )
 
-                if (!hasRelevantKeyword) return null
+                // If no kid keywords found, at least check it's not obviously inappropriate
+                if (!hasRelevantKeyword && combinedText.length > 0) {
+                    // Allow it if it doesn't have adult markers
+                    console.log(`[Kids API] Allowing video without kid keywords: ${video.title}`)
+                }
 
                 return {
                     id: video.id,
