@@ -116,19 +116,65 @@ async function searchVideos(query: string, page: number, continuationToken: stri
                 const channel = (video.channelTitle || '').toLowerCase()
                 const combinedText = `${title} ${description} ${channel}`
 
-                // Block movies, TV shows, and adult content
+                // Comprehensive child-safety filtering
+                // Block ANY content not appropriate for children
                 const inappropriateKeywords = [
                     // Movies & TV Shows
-                    'full movie', 'full film', 'película completa', 'فيلم كامل',
-                    'tv show', 'tv series', 'episode', 'season',
-                    'netflix', 'disney+', 'hbo', 'prime video',
-                    // Adult content
-                    '18+', 'adult only', 'nsfw', 'explicit', 'mature',
-                    'horror', 'scary', 'violent', 'gore', 'blood',
-                    // Inappropriate music
-                    'rap battle', 'diss track', 'explicit lyrics',
-                    // Long-form documentaries (not kid-friendly)
-                    'documentary', 'full documentary', 'وثائقي كامل'
+                    'full movie', 'full film', 'película completa', 'فيلم كامل', 'film complet',
+                    'tv show', 'tv series', 'episode', 'season', 'مسلسل', 'حلقة',
+                    'netflix', 'disney+', 'hbo', 'prime video', 'hulu', 'apple tv',
+
+                    // Adult & Mature Content
+                    '18+', '16+', '13+', 'adult only', 'nsfw', 'explicit', 'mature',
+                    'parental advisory', 'viewer discretion', 'not for kids',
+
+                    // Violence & Horror
+                    'horror', 'scary', 'violent', 'gore', 'blood', 'murder', 'kill',
+                    'death', 'dead', 'zombie', 'ghost', 'demon', 'devil', 'evil',
+                    'weapon', 'gun', 'knife', 'sword', 'fight', 'war', 'battle',
+                    'shoot', 'attack', 'crime', 'criminal', 'prison', 'jail',
+
+                    // Inappropriate Music & Entertainment
+                    'rap battle', 'diss track', 'explicit lyrics', 'uncensored',
+                    'music video', 'official video', 'vevo', 'lyric video',
+                    'nightclub', 'party', 'drunk', 'alcohol', 'beer', 'wine',
+
+                    // News & Politics (not for kids)
+                    'breaking news', 'news report', 'أخبار', 'نشرة',
+                    'politics', 'political', 'election', 'president', 'government',
+                    'war', 'conflict', 'crisis', 'disaster', 'tragedy',
+
+                    // Documentaries & Educational (adult-level)
+                    'documentary', 'full documentary', 'وثائقي كامل', 'documental',
+                    'investigation', 'expose', 'true story', 'real story',
+
+                    // Gaming (violent/mature games)
+                    'gta', 'grand theft auto', 'call of duty', 'fortnite',
+                    'pubg', 'free fire', 'mortal kombat', 'resident evil',
+
+                    // Pranks & Challenges (potentially dangerous)
+                    'prank gone wrong', 'extreme challenge', 'dangerous',
+                    'do not try', 'warning', 'injury', 'hospital',
+
+                    // Romance & Dating (not for kids)
+                    'dating', 'boyfriend', 'girlfriend', 'romance', 'love story',
+                    'kiss', 'romantic', 'relationship', 'breakup',
+
+                    // Conspiracy & Paranormal
+                    'conspiracy', 'illuminati', 'alien', 'ufo', 'paranormal',
+                    'haunted', 'possessed', 'curse', 'ritual',
+
+                    // Social Media Drama
+                    'drama', 'exposed', 'cancelled', 'controversy', 'scandal',
+                    'beef', 'feud', 'diss', 'roast', 'reaction',
+
+                    // Inappropriate Language Indicators
+                    'cursing', 'swearing', 'profanity', 'bad words',
+                    'bleeped', 'censored', 'uncut', 'raw',
+
+                    // Clickbait & Sensational
+                    'you won\'t believe', 'shocking', 'disturbing', 'graphic',
+                    'warning graphic', 'viewer discretion advised'
                 ]
 
                 const hasInappropriate = inappropriateKeywords.some(keyword =>
