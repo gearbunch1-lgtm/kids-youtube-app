@@ -98,10 +98,10 @@ async function searchVideos(query: string, page: number, continuationToken: stri
             // Decode base64 continuation token
             const decodedToken = atob(continuationToken)
             console.log(`[Kids API] Using decoded continuation token`)
-            searchResults = await fetchYouTubeSearchContinuation(decodedToken, 75)
+            searchResults = await fetchYouTubeSearchContinuation(decodedToken, 150)
         } else {
             // Fresh search for first page
-            searchResults = await fetchYouTubeSearch(searchQuery, 75)
+            searchResults = await fetchYouTubeSearch(searchQuery, 150)
         }
 
         // Kid-friendly keywords - make it more lenient
