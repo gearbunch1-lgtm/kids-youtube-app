@@ -8,6 +8,13 @@ class VideoProvider with ChangeNotifier {
   final YouTubeService _youtubeService = YouTubeService();
   final StorageService _storageService = StorageService();
 
+  List<Video> _videos = []; // For search results or specific category view
+  final Map<String, List<Video>> _categoryVideos =
+      {}; // For home screen sections
+  bool _isLoading = false;
+  String? _nextPageToken;
+  cat.Category? _selectedCategory;
+  String _searchQuery = '';
   List<String> _searchHistory = [];
   String? _error;
 
