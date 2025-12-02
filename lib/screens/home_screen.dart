@@ -5,6 +5,8 @@ import '../providers/video_provider.dart';
 import '../providers/bookmark_provider.dart';
 import '../providers/history_provider.dart';
 import '../widgets/video_card.dart';
+import '../widgets/fade_in_widget.dart';
+import '../utils/responsive_grid.dart';
 
 import 'video_player_screen.dart';
 import 'favorites_screen.dart';
@@ -406,12 +408,7 @@ class _HomeScreenState extends State<HomeScreen> {
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               sliver: SliverGrid(
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 300,
-                  childAspectRatio: 0.82,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                ),
+                gridDelegate: ResponsiveGrid.getGridDelegate(context),
                 delegate: SliverChildBuilderDelegate(
                   (context, index) => const VideoCardSkeleton(),
                   childCount: 6,
@@ -422,23 +419,20 @@ class _HomeScreenState extends State<HomeScreen> {
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               sliver: SliverGrid(
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent:
-                      300, // Ensures cards are roughly consistent in width
-                  childAspectRatio: 0.82,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                ),
+                gridDelegate: ResponsiveGrid.getGridDelegate(context),
                 delegate: SliverChildBuilderDelegate((context, index) {
                   final video = videoProvider.videos[index];
-                  return VideoCard(
-                    video: video,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        FadePageRoute(page: VideoPlayerScreen(video: video)),
-                      );
-                    },
+                  return FadeInWidget(
+                    delay: Duration(milliseconds: index * 30),
+                    child: VideoCard(
+                      video: video,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          FadePageRoute(page: VideoPlayerScreen(video: video)),
+                        );
+                      },
+                    ),
                   );
                 }, childCount: videoProvider.videos.length),
               ),
@@ -449,12 +443,7 @@ class _HomeScreenState extends State<HomeScreen> {
             SliverPadding(
               padding: const EdgeInsets.all(16),
               sliver: SliverGrid(
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 300,
-                  childAspectRatio: 0.82,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                ),
+                gridDelegate: ResponsiveGrid.getGridDelegate(context),
                 delegate: SliverChildBuilderDelegate(
                   (context, index) => const VideoCardSkeleton(),
                   childCount: 2,
