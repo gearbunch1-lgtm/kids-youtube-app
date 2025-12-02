@@ -142,9 +142,11 @@ async function searchVideos(query: string, page: number, continuationToken: stri
                     // Documentaries
                     'documentary', 'full documentary', 'وثائقي كامل', 'documental',
                     'investigation', 'expose', 'true story', 'real story',
-                    // Gaming
+                    // Gaming (English & Arabic)
                     'gta', 'grand theft auto', 'call of duty', 'fortnite',
                     'pubg', 'free fire', 'mortal kombat', 'resident evil',
+                    'gameplay', 'let\'s play', 'gaming', 'gamer',
+                    'لعبة', 'العاب', 'قيمنق', 'قيمر', 'بلاي ستيشن', 'اكس بوكس',
                     // Pranks & Challenges
                     'prank gone wrong', 'extreme challenge', 'dangerous',
                     'do not try', 'warning', 'injury', 'hospital',
@@ -175,7 +177,22 @@ async function searchVideos(query: string, page: number, continuationToken: stri
                     'calculus', 'algebra', 'trigonometry', 'physics', 'chemistry',
                     'biology', 'organic chemistry', 'advanced', 'ap class',
                     'professional', 'certification', 'training course',
-                    'tutorial for adults', 'adult learning', 'continuing education'
+                    'tutorial for adults', 'adult learning', 'continuing education',
+                    // YouTuber Vlogs & Personal Content (Arabic & English)
+                    'vlog', 'فلوق', 'يومياتي', 'يوميات', 'my day', 'daily vlog',
+                    'youtuber', 'يوتيوبر', 'مشهور', 'influencer', 'انفلونسر',
+                    'meet and greet', 'لقاء', 'مقابلة', 'interview',
+                    'behind the scenes', 'خلف الكواليس',
+                    // Speech & Talk Content (Arabic)
+                    'محاضرة', 'خطاب', 'كلمة', 'حديث', 'مناظرة',
+                    'speech', 'talk', 'conference', 'مؤتمر', 'ندوة',
+                    'podcast', 'بودكاست', 'حوار', 'نقاش', 'discussion',
+                    // Shopping & Reviews (Not for kids)
+                    'haul', 'unboxing', 'review', 'مراجعة', 'فتح علبة',
+                    'shopping', 'تسوق', 'شراء', 'purchase',
+                    // Makeup & Beauty (Not for kids)
+                    'makeup', 'مكياج', 'beauty', 'تجميل', 'cosmetics',
+                    'tutorial', 'درس', 'شرح' // Only when combined with adult topics
                 ]
 
                 const hasInappropriate = inappropriateKeywords.some(keyword =>
