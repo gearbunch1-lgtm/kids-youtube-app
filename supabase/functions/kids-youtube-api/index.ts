@@ -121,7 +121,7 @@ async function searchVideos(query: string, page: number, continuationToken: stri
             .map((video: any) => {
                 const durationSeconds = parseDuration(video.duration || '')
 
-                // Relax duration filter: 2 minutes to 45 minutes (requested by user)
+                // Duration filter: 2 minutes to 45 minutes
                 if (durationSeconds < 120 || durationSeconds > 2700) return null
 
                 const title = (video.title || '').toLowerCase()
@@ -129,20 +129,16 @@ async function searchVideos(query: string, page: number, continuationToken: stri
                 const channel = (video.channelTitle || '').toLowerCase()
                 const combinedText = `${title} ${description} ${channel}`
 
-                // Check for adult content (safety net)
+                // Only filter out explicit adult content
                 const hasAdultContent = combinedText.includes('18+') ||
                     combinedText.includes('adult only') ||
-                    combinedText.includes('nsfw')
+                    combinedText.includes('nsfw') ||
+                    combinedText.includes('explicit')
 
                 if (hasAdultContent) return null
 
-                // Strict keyword matching to ensure relevance
-                const hasRelevantKeyword = kidsKeywords.some(keyword =>
-                    combinedText.includes(keyword.toLowerCase())
-                )
-
-                // Require at least one kid-friendly keyword to ensure relevance
-                if (!hasRelevantKeyword) return null
+                // Trust YouTube's search - the Flutter app sends category-specific queries
+                // No need for additional keyword filtering
 
                 return {
                     id: video.id,
