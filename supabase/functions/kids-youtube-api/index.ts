@@ -117,6 +117,70 @@ async function searchVideos(query: string, page: number, continuationToken: stri
                 const combinedText = `${title} ${description} ${channel}`
 
                 // Comprehensive child-safety filtering
+                // Block ANY content not appropriate for children
+                const inappropriateKeywords = [
+                    // Movies & TV Shows
+                    'full movie', 'full film', 'película completa', 'فيلم كامل', 'film complet',
+                    'tv show', 'tv series', 'episode', 'season', 'مسلسل', 'حلقة',
+                    'netflix', 'disney+', 'hbo', 'prime video', 'hulu', 'apple tv',
+                    // Adult & Mature Content
+                    '18+', '16+', '13+', 'adult only', 'nsfw', 'explicit', 'mature',
+                    'parental advisory', 'viewer discretion', 'not for kids',
+                    // Violence & Horror
+                    'horror', 'scary', 'violent', 'gore', 'blood', 'murder', 'kill',
+                    'death', 'dead', 'zombie', 'ghost', 'demon', 'devil', 'evil',
+                    'weapon', 'gun', 'knife', 'sword', 'fight', 'war', 'battle',
+                    'shoot', 'attack', 'crime', 'criminal', 'prison', 'jail',
+                    // Inappropriate Music & Entertainment
+                    'rap battle', 'diss track', 'explicit lyrics', 'uncensored',
+                    'music video', 'official video', 'vevo', 'lyric video',
+                    'nightclub', 'party', 'drunk', 'alcohol', 'beer', 'wine',
+                    // News & Politics
+                    'breaking news', 'news report', 'أخبار', 'نشرة',
+                    'politics', 'political', 'election', 'president', 'government',
+                    'war', 'conflict', 'crisis', 'disaster', 'tragedy',
+                    // Documentaries
+                    'documentary', 'full documentary', 'وثائقي كامل', 'documental',
+                    'investigation', 'expose', 'true story', 'real story',
+                    // Gaming
+                    'gta', 'grand theft auto', 'call of duty', 'fortnite',
+                    'pubg', 'free fire', 'mortal kombat', 'resident evil',
+                    // Pranks & Challenges
+                    'prank gone wrong', 'extreme challenge', 'dangerous',
+                    'do not try', 'warning', 'injury', 'hospital',
+                    // Romance & Dating
+                    'dating', 'boyfriend', 'girlfriend', 'romance', 'love story',
+                    'kiss', 'romantic', 'relationship', 'breakup',
+                    // Conspiracy & Paranormal
+                    'conspiracy', 'illuminati', 'alien', 'ufo', 'paranormal',
+                    'haunted', 'possessed', 'curse', 'ritual',
+                    // Social Media Drama
+                    'drama', 'exposed', 'cancelled', 'controversy', 'scandal',
+                    'beef', 'feud', 'diss', 'roast', 'reaction',
+                    // Inappropriate Language
+                    'cursing', 'swearing', 'profanity', 'bad words',
+                    'bleeped', 'censored', 'uncut', 'raw',
+                    // Clickbait
+                    'you won\'t believe', 'shocking', 'disturbing', 'graphic',
+                    'warning graphic', 'viewer discretion advised',
+                    // Adult Education
+                    'university', 'college', 'university lecture', 'lecture',
+                    'medical school', 'med school', 'medical student', 'mbbs',
+                    'nursing school', 'dental school', 'pharmacy',
+                    'undergraduate', 'graduate', 'phd', 'masters', 'bachelor',
+                    'professor', 'doctoral', 'thesis', 'dissertation',
+                    'anatomy', 'physiology', 'pathology', 'pharmacology',
+                    'biochemistry', 'microbiology', 'immunology',
+                    'high school', 'secondary school', 'sat', 'act', 'exam prep',
+                    'calculus', 'algebra', 'trigonometry', 'physics', 'chemistry',
+                    'biology', 'organic chemistry', 'advanced', 'ap class',
+                    'professional', 'certification', 'training course',
+                    'tutorial for adults', 'adult learning', 'continuing education'
+                ]
+
+                const hasInappropriate = inappropriateKeywords.some(keyword =>
+                    combinedText.includes(keyword)
+                )
 
                 if (hasInappropriate) return null
 
