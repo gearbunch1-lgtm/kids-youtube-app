@@ -62,6 +62,40 @@ serve(async (req) => {
             )
         }
 
+        // Stream URL endpoint - extracts direct video stream URL for instant playback
+        if (path.startsWith('/api/stream/')) {
+            const videoId = path.replace('/api/stream/', '')
+
+            if (!videoId) {
+                return new Response(
+                    JSON.stringify({ error: 'Video ID is required' }),
+                    { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+                )
+            }
+
+            try {
+                const streamUrl = await getVideoStreamUrl(videoId)
+
+                if (streamUrl) {
+                    return new Response(
+                        JSON.stringify({ streamUrl, videoId }),
+                        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+                    )
+                } else {
+                    return new Response(
+                        JSON.stringify({ error: 'Could not extract stream URL', videoId }),
+                        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+                    )
+                }
+            } catch (error) {
+                console.error('[Stream API] Error:', error)
+                return new Response(
+                    JSON.stringify({ error: error.message, videoId }),
+                    { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+                )
+            }
+        }
+
         // Health check
         if (path === '/api/health') {
             return new Response(
@@ -395,4 +429,73 @@ function formatDuration(seconds: number): string {
         return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
     }
     return `${minutes}:${secs.toString().padStart(2, '0')}`
+}
+
+// Extract direct video stream URL for instant playback
+async function getVideoStreamUrl(videoId: string): Promise<string | null> {
+    console.log(`[Stream API] Extracting stream URL for: ${videoId}`)
+
+    try {
+        // Use YouTube's player API to get stream URLs
+        const response = await fetch('https://www.youtube.com/youtubei/v1/player?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                context: {
+                    client: {
+                        clientName: 'ANDROID',
+                        clientVersion: '19.09.37',
+                        androidSdkVersion: 30,
+                        hl: 'en',
+                        gl: 'US',
+                    },
+                },
+                videoId: videoId,
+            }),
+        })
+
+        const data = await response.json()
+
+        // Check for playability errors
+        if (data.playabilityStatus?.status !== 'OK') {
+            console.log(`[Stream API] Video not playable: ${data.playabilityStatus?.reason || 'Unknown reason'}`)
+            return null
+        }
+
+        // Get streaming formats
+        const formats = data.streamingData?.formats || []
+        const adaptiveFormats = data.streamingData?.adaptiveFormats || []
+
+        // Prefer muxed formats (video+audio) for simplicity
+        // Sort by quality (prefer lower quality for faster loading)
+        const muxedFormats = formats
+            .filter((f: any) => f.url && f.mimeType?.includes('video/mp4'))
+            .sort((a: any, b: any) => (a.height || 0) - (b.height || 0))
+
+        if (muxedFormats.length > 0) {
+            // Get lowest quality (usually 360p) for fastest loading
+            const bestFormat = muxedFormats[0]
+            console.log(`[Stream API] Found muxed stream: ${bestFormat.qualityLabel || bestFormat.height + 'p'}`)
+            return bestFormat.url
+        }
+
+        // Fallback to adaptive video format if no muxed available
+        const videoFormats = adaptiveFormats
+            .filter((f: any) => f.url && f.mimeType?.includes('video/mp4'))
+            .sort((a: any, b: any) => (a.height || 0) - (b.height || 0))
+
+        if (videoFormats.length > 0) {
+            const bestFormat = videoFormats[0]
+            console.log(`[Stream API] Found adaptive video stream: ${bestFormat.qualityLabel || bestFormat.height + 'p'}`)
+            return bestFormat.url
+        }
+
+        console.log('[Stream API] No suitable stream found')
+        return null
+    } catch (error) {
+        console.error('[Stream API] Error extracting stream:', error)
+        throw error
+    }
 }

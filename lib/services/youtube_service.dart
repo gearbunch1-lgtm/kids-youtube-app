@@ -9,6 +9,38 @@ class YouTubeService {
   static const String _backendUrl =
       'https://kivsnvphztbywnwlffmb.supabase.co/functions/v1/kids-youtube-api';
 
+  /// Get direct stream URL for a video (for instant playback)
+  /// Returns null if extraction fails - caller should fallback to YouTube URL
+  Future<String?> getStreamUrl(String videoId) async {
+    try {
+      final url = Uri.parse('$_backendUrl/api/stream/$videoId');
+      print('Fetching stream URL: $url');
+
+      final response = await http
+          .get(url)
+          .timeout(
+            const Duration(seconds: 10),
+            onTimeout: () {
+              throw Exception('Stream URL request timeout');
+            },
+          );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final streamUrl = data['streamUrl'] as String?;
+        if (streamUrl != null) {
+          print('Got stream URL for $videoId');
+          return streamUrl;
+        }
+      }
+      print('Failed to get stream URL: ${response.statusCode}');
+      return null;
+    } catch (e) {
+      print('Error getting stream URL: $e');
+      return null;
+    }
+  }
+
   // Search for videos using backend proxy (unlimited, no API key needed!)
   Future<Map<String, dynamic>> searchVideos(
     String query, {
